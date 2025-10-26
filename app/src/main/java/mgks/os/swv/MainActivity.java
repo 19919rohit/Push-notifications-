@@ -125,8 +125,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Enable edge-to-edge display
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+      
 
         super.onCreate(savedInstanceState);
+        // --- FCM Token Debug Block ---
+        FirebaseMessaging.getInstance().getToken()
+    .addOnCompleteListener(task -> {
+        if (!task.isSuccessful()) {
+            Toast.makeText(this, "FCM Token fetch failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String token = task.getResult();
+
+        // Copy token to clipboard
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("FCM Token", token);
+        clipboard.setPrimaryClip(clip);
+
+        // Show success message
+        Toast.makeText(this, "✅ FCM Token copied to clipboard!", Toast.LENGTH_LONG).show();
+
+        // Log to console
+        android.util.Log.d("🔥 FCM_TOKEN", token);
+    });
 
         // Handle splash screen
         final SplashScreen splashScreen = androidx.core.splashscreen.SplashScreen.installSplashScreen(this);
